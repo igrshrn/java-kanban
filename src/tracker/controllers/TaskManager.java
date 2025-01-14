@@ -1,15 +1,18 @@
+package tracker.controllers;
+
+import tracker.model.Epic;
+import tracker.model.Subtask;
+import tracker.model.Task;
+import tracker.util.TaskStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
-    private int idCounter = 1;
+    private int idCounter = 0;
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
-
-    public int generateId() {
-        return idCounter++;
-    }
 
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
@@ -24,21 +27,31 @@ public class TaskManager {
     }
 
     public Task getTaskById(int id) {
-        if (tasks.containsKey(id)) return tasks.get(id);
-        if (epics.containsKey(id)) return epics.get(id);
+        if (tasks.containsKey(id)) {
+            return tasks.get(id);
+        }
+        if (epics.containsKey(id)) {
+            return epics.get(id);
+        }
         return subtasks.get(id);
     }
 
     public void addTask(Task task) {
-        tasks.put(task.getId(), task);
+        final int id = ++idCounter;
+        task.setId(id);
+        tasks.put(id, task);
     }
 
     public void addEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+        final int id = ++idCounter;
+        epic.setId(id);
+        epics.put(id, epic);
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
+        final int id = ++idCounter;
+        subtask.setId(id);
+        subtasks.put(id, subtask);
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
             epic.addSubtask(subtask.getId());
@@ -79,6 +92,23 @@ public class TaskManager {
         }
     }
 
+    public void deleteTasks() {
+        tasks.clear();
+    }
+
+    public void deleteSubtasks() {
+        for (Epic epic : epics.values()) {
+            epic.cleanSubtaskIds();
+            updateEpicStatus(epic);
+        }
+        subtasks.clear();
+    }
+
+    public void deleteEpics() {
+        epics.clear();
+        subtasks.clear();
+    }
+
     public void clearAllTasks() {
         tasks.clear();
         epics.clear();
@@ -89,7 +119,7 @@ public class TaskManager {
         ArrayList<Subtask> result = new ArrayList<>();
 
         Epic epic = epics.get(epicId);
-        if (epic == null){
+        if (epic == null) {
             return result;
         }
 
