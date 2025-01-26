@@ -1,13 +1,14 @@
-import tracker.controllers.TaskManager;
+import tracker.interfaces.TaskManager;
 import tracker.model.Epic;
 import tracker.model.Subtask;
 import tracker.model.Task;
+import tracker.util.Managers;
 import tracker.util.TaskStatus;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         Task task1 = new Task("Task 1", "Description of Task 1", TaskStatus.NEW);
         Task task2 = new Task("Task 2", "Description of Task 2", TaskStatus.NEW);
