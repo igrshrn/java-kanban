@@ -7,6 +7,7 @@ import tracker.model.Subtask;
 import tracker.model.Task;
 import tracker.util.Managers;
 import tracker.util.TaskStatus;
+import tracker.util.TaskType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,14 +82,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-        if (task instanceof Subtask) {
+        if (task.getType().equals(TaskType.SUBTASK)) {
             Subtask subtask = (Subtask) task;
             subtasks.put(task.getId(), subtask);
             Epic epic = epics.get(subtask.getEpicId());
             if (epic != null) {
                 updateEpicStatus(epic);
             }
-        } else if (task instanceof Epic) {
+        } else if (task.getType().equals(TaskType.EPIC)) {
             epics.put(task.getId(), (Epic) task);
         } else {
             tasks.put(task.getId(), task);

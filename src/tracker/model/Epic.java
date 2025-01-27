@@ -3,6 +3,7 @@ package tracker.model;
 import java.util.ArrayList;
 
 import tracker.util.TaskStatus;
+import tracker.util.TaskType;
 
 public class Epic extends Task {
     private ArrayList<Integer> subtaskIds;
@@ -29,6 +30,11 @@ public class Epic extends Task {
 
     public void cleanSubtaskIds() {
         subtaskIds.clear();
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.EPIC;
     }
 
     @Override

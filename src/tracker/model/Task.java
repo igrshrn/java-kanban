@@ -2,6 +2,7 @@ package tracker.model;
 
 import java.util.Objects;
 import tracker.util.TaskStatus;
+import tracker.util.TaskType;
 
 public class Task {
     private int id;
@@ -37,6 +38,10 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public TaskType getType() {
+        return TaskType.TASK;
     }
 
     @Override
