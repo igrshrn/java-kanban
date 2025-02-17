@@ -1,6 +1,7 @@
 package tracker.model;
 
 import java.util.Objects;
+
 import tracker.util.TaskStatus;
 import tracker.util.TaskType;
 
