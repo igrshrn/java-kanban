@@ -282,8 +282,50 @@ class InMemoryTaskManagerTest {
         taskManager.getTaskById(task.getId());
 
         final List<Task> history = taskManager.getHistory();
+
         assertNotNull(history, "История не пустая.");
         assertEquals(1, history.size(), "История не пустая.");
         assertEquals(task, history.get(0), "Задача должна быть добавлена в историю.");
+    }
+
+    @Test
+    void getHistoryAfterRemove() {
+        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+
+        Epic epic1 = new Epic("Epic 1", "Description Epic 1");
+        Epic epic2 = new Epic("Epic 2", "Description Epic 2");
+        taskManager.addEpic(epic1);
+        taskManager.addEpic(epic2);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", TaskStatus.NEW, epic1.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description Subtask 2", TaskStatus.NEW, epic1.getId());
+        Subtask subtask3 = new Subtask("Subtask 3", "Description Subtask 3", TaskStatus.NEW, epic1.getId());
+
+        taskManager.addSubtask(subtask1);
+        taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask3);
+
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+        taskManager.getTaskById(epic1.getId());
+        taskManager.getTaskById(epic2.getId());
+        taskManager.getTaskById(subtask1.getId());
+        taskManager.getTaskById(subtask2.getId());
+        taskManager.getTaskById(subtask3.getId());
+
+        taskManager.deleteTaskById(task1.getId());
+        List<Task> history = taskManager.getHistory();
+        assertEquals(6, history.size(), "После удаления Task 1 в истории должно остаться 6 записей");
+
+        taskManager.deleteTaskById(subtask3.getId());
+        history = taskManager.getHistory();
+        assertEquals(5, history.size(), "После удаления Subtask 3 в истории должно остаться 5 записей");
+
+        taskManager.deleteTaskById(epic1.getId());
+        history = taskManager.getHistory();
+        assertEquals(2, history.size(), "После удаления Epic 1 в истории должно остаться 2 записи");
     }
 }

@@ -29,7 +29,6 @@ class InMemoryHistoryManagerTest {
         assertNotNull(history, "История не пустая.");
         assertEquals(1, history.size(), "История не пустая.");
         assertEquals(task, history.get(0), "Задача должна быть добавлена в историю.");
-
     }
 
     @Test
@@ -41,10 +40,11 @@ class InMemoryHistoryManagerTest {
         }
 
         final List<Task> history = historyManager.getHistory();
+
+        System.out.println(history.size());
+        System.out.println(history.get(0).getId());
         assertNotNull(history, "История не пустая.");
-        assertEquals(10, history.size(), "История должна содержать 10 задач.");
-        assertEquals(2, history.get(0).getId(), "Первая задача должна быть второй добавленной задачей.");
-        assertEquals(11, history.get(9).getId(), "Последняя задача должна быть одиннадцатой добавленной задачей.");
+        assertEquals(11, history.size(), "История должна содержать 11 задач.");
     }
 
     @Test
@@ -62,4 +62,33 @@ class InMemoryHistoryManagerTest {
         assertEquals(task1, history.get(0), "Первая задача должна быть добавлена в историю.");
         assertEquals(task2, history.get(1), "Вторая задача должна быть добавлена в историю.");
     }
+
+    @Test
+    void getHistoryAfterAdd() {
+        Task task1 = new Task("Test getHistory 1", "Test getHistory 1 description", TaskStatus.NEW);
+        Task task2 = new Task("Test getHistory 2", "Test getHistory 2 description", TaskStatus.NEW);
+        Task task3 = new Task("Test getHistory 3", "Test getHistory 3 description", TaskStatus.NEW);
+
+        task1.setId(1);
+        task2.setId(2);
+        task3.setId(3);
+
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task2);
+        List<Task> history = historyManager.getHistory();
+        assertEquals(task1, history.get(0), "Первая задача должна быть добавлена в историю.");
+        assertEquals(task2, history.get(1), "Вторая задача должна быть добавлена в историю.");
+
+        historyManager.add(task3);
+        history = historyManager.getHistory();
+        assertEquals(task3, history.get(2), "Третья задача должна быть добавлена в историю.");
+
+        historyManager.add(task1);
+        history = historyManager.getHistory();
+        assertEquals(task2, history.get(0), "После перестановки первой в истории должна быть вторая.");
+        assertEquals(task3, history.get(1), "После перестановки второй в истории должна быть третья.");
+        assertEquals(task1, history.get(2), "После перестановки третьей в истории должна быть первая.");
+    }
+
 }
