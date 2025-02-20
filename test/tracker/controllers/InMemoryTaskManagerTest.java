@@ -328,4 +328,61 @@ class InMemoryTaskManagerTest {
         history = taskManager.getHistory();
         assertEquals(2, history.size(), "После удаления Epic 1 в истории должно остаться 2 записи");
     }
+
+    @Test
+    void getHistoryAfterRemoveAllTasks() {
+        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
+
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+
+        taskManager.deleteTasks();
+        List<Task> history = taskManager.getHistory();
+        assertEquals(0, history.size(), "После удаления всех тасок, история должна оказаться пустой");
+    }
+
+    @Test
+    void getHistoryAfterRemoveAllSubtasks() {
+        Epic epic1 = new Epic("Epic 1", "Description Epic 1");
+        Epic epic2 = new Epic("Epic 2", "Description Epic 2");
+
+        taskManager.addEpic(epic1);
+        taskManager.addEpic(epic2);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", TaskStatus.NEW, epic1.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Description Subtask 2", TaskStatus.NEW, epic1.getId());
+        Subtask subtask3 = new Subtask("Subtask 3", "Description Subtask 3", TaskStatus.NEW, epic1.getId());
+
+        taskManager.addSubtask(subtask1);
+        taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask3);
+
+        taskManager.getTaskById(subtask1.getId());
+        taskManager.getTaskById(subtask2.getId());
+        taskManager.getTaskById(subtask3.getId());
+
+        taskManager.deleteSubtasks();
+        List<Task> history = taskManager.getHistory();
+        assertEquals(0, history.size(), "После удаления всех сабтасок в истории должны оказаться 2 эпика");
+    }
+
+    @Test
+    void getHistoryAfterRemoveAllEpics() {
+        Epic epic1 = new Epic("Epic 1", "Description Epic 1");
+        Epic epic2 = new Epic("Epic 2", "Description Epic 2");
+
+        taskManager.addEpic(epic1);
+        taskManager.addEpic(epic2);
+
+        taskManager.getTaskById(epic1.getId());
+        taskManager.getTaskById(epic2.getId());
+
+        taskManager.deleteEpics();
+        List<Task> history = taskManager.getHistory();
+        assertEquals(0, history.size(), "После удаления всех сабтасок в истории должны оказаться 2 эпика");
+    }
 }

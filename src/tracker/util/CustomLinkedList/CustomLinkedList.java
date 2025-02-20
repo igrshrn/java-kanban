@@ -61,4 +61,18 @@ public class CustomLinkedList {
         next.prev = prev;
         nodeMap.remove(node.task.getId());
     }
+
+    static class Node {
+        public Task task;
+        public Node prev;
+        public Node next;
+
+        public Node() {
+            this(null);
+        }
+
+        public Node(Task task) {
+            this.task = task;
+        }
+    }
 }
