@@ -2,23 +2,26 @@ package tracker.controllers;
 
 import tracker.interfaces.HistoryManager;
 import tracker.model.Task;
+import tracker.util.CustomLinkedList.CustomLinkedList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final List<Task> history = new ArrayList<>();
+    private final CustomLinkedList customLinkedList = new CustomLinkedList();
 
     @Override
     public void add(Task task) {
-        if (history.size() >= 10) {
-            history.remove(0);
-        }
-        history.add(task);
+        customLinkedList.add(task.getId(), task);
+    }
+
+    @Override
+    public void remove(int id) {
+        customLinkedList.remove(id);
     }
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(history);
+        return customLinkedList.getDataList();
     }
+
 }
