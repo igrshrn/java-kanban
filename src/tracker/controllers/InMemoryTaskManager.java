@@ -198,4 +198,8 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
+
+    public void setIdCounter(int idCounter) {
+        this.idCounter = idCounter;
+    }
 }

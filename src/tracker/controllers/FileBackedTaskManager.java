@@ -1,5 +1,6 @@
 package tracker.controllers;
 
+import tracker.exceptions.ManagerSaveException;
 import tracker.model.Epic;
 import tracker.model.Subtask;
 import tracker.model.Task;
@@ -92,13 +93,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
-
         try {
             List<String> lines = Files.readAllLines(file.toPath());
             lines.remove(0); // Удаляем шапку
 
             for (String line : lines) {
                 Task task = taskFromString(line);
+
+                manager.setIdCounter(task.getId() - 1);
+
                 if (task.getType() == TaskType.TASK) {
                     manager.addTask(task);
                 } else if (task.getType() == TaskType.EPIC) {
@@ -106,6 +109,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 } else if (task.getType() == TaskType.SUBTASK) {
                     manager.addSubtask((Subtask) task);
                 }
+
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка чтения файла", e);
@@ -119,6 +123,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (task.getType() == TaskType.SUBTASK) {
             epicId = "," + ((Subtask) task).getEpicId();
         }
+
         return String.format("%d,%s,%s,%s,%s%s",
                 task.getId(),
                 task.getType(),
@@ -140,6 +145,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (type == TaskType.SUBTASK) {
             int epicId = Integer.parseInt(parts[5]);
             task = new Subtask(title, description, status, epicId);
+
         } else if (type == TaskType.EPIC) {
             task = new Epic(title, description);
         } else {
@@ -147,13 +153,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
         task.setId(id);
-        return task;
-    }
 
-    public static class ManagerSaveException extends RuntimeException {
-        public ManagerSaveException(String message, Throwable cause) {
-            super(message, cause);
-        }
+        return task;
     }
 
     public static void main(String[] args) {
@@ -165,9 +166,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
             Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
+            Task task3 = new Task("Task 3", "Description 3", TaskStatus.NEW);
+            Task task4 = new Task("Task 4", "Description 4", TaskStatus.NEW);
+            Task task5 = new Task("Task 5", "Description 5", TaskStatus.NEW);
 
             manager.addTask(task1);
             manager.addTask(task2);
+            manager.addTask(task3);
+            manager.deleteTaskById(2);
+            manager.addTask(task4);
+            manager.deleteTaskById(3);
+            manager.addTask(task5);
 
             Epic epic1 = new Epic("Epic 1", "Description Epic 1");
             Epic epic2 = new Epic("Epic 2", "Description Epic 2");
@@ -181,28 +190,34 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             manager.addSubtask(subtask1);
             manager.addSubtask(subtask2);
 
-            // Сохранение данных
-            manager.save();
+            //manager.deleteTasks();
 
             // Создаем новый менеджер из файла
             FileBackedTaskManager newManager = FileBackedTaskManager.loadFromFile(file);
 
-            // Проверяем, что все задачи сохранены
-            System.out.println("Задачи в новом менеджере:");
+            System.out.println("\nЗадачи в старом менеджере:");
+            for (Task task : manager.getAllTasks()) {
+                System.out.println(task);
+            }
+
+            System.out.println("\nЗадачи в новом менеджере:");
             for (Task task : newManager.getAllTasks()) {
                 System.out.println(task);
             }
 
-            System.out.println("\nЭпики в новом менеджере:");
+            System.out.println("\nЭпики и их подзадачи в старом менеджере:");
+            for (Epic epic : manager.getAllEpics()) {
+                System.out.println(epic);
+                System.out.println(epic.getSubtaskIds());
+                System.out.println("===");
+            }
+
+            System.out.println("\nЭпики и их подзадачи в новом менеджере:");
             for (Epic epic : newManager.getAllEpics()) {
                 System.out.println(epic);
+                System.out.println(epic.getSubtaskIds());
+                System.out.println("===");
             }
-
-            System.out.println("\nПодзадачи в новом менеджере:");
-            for (Subtask subtask : newManager.getAllSubtasks()) {
-                System.out.println(subtask);
-            }
-
         } catch (IOException e) {
             System.err.println("Ошибка при работе с файлом: " + e.getMessage());
         }
