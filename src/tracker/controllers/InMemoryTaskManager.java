@@ -73,14 +73,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addEpic(Epic epic) {
-        try {
-            doesTaskOverlapWithExisting(epic);
-            final int id = ++idCounter;
-            epic.setId(id);
-            epics.put(id, epic);
-        } catch (TaskOverlapException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
+        final int id = ++idCounter;
+        epic.setId(id);
+        epics.put(id, epic);
     }
 
     @Override
