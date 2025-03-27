@@ -12,23 +12,35 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager manager = Managers.getDefault();
+        Task task = new Task("Test updateTask", "Test updateTask description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
+        manager.addTask(task);
+
+        Task updatedTask = new Task("Test updateTask updated", "Test updateTask updated description", TaskStatus.IN_PROGRESS, Duration.ofMinutes(10), LocalDateTime.now());
+        updatedTask.setId(task.getId());
+        manager.updateTask(updatedTask);
+
+        final Task savedTask = manager.getTaskById(task.getId());
+        System.out.println(savedTask);
+        System.out.println(manager.getPrioritizedTasks());
 
         // Создание задач
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(40), LocalDateTime.now().withSecond(0).withNano(0));
-        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1).withSecond(0).withNano(0));
-        Task task3 = new Task("Task 3", "Description 3", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1).withSecond(0).withNano(0));
+        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(4).withSecond(0).withNano(0));
+        Task task3 = new Task("Task 3", "Description 3", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(2).withSecond(0).withNano(0));
+        Task task4 = new Task("Task 4", "Description 4", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1).withSecond(0).withNano(0));
 
         manager.addTask(task1);
         manager.addTask(task2);
         manager.addTask(task3);
+        manager.addTask(task4);
 
         // Создание эпиков
         Epic epic1 = new Epic("Epic 1", "Description Epic 1");
-        //Epic epic2 = new Epic("Epic 2", "Description Epic 2");
+        Epic epic2 = new Epic("Epic 2", "Description Epic 2");
 
         manager.addEpic(epic1);
-        //manager.addEpic(epic2);
-        //System.out.println(epic1);
+        manager.addEpic(epic2);
+
         // Создание подзадач для эпика 1
         Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", TaskStatus.NEW, epic1.getId(), Duration.ofMinutes(10), LocalDateTime.now().plusDays(3));
         Subtask subtask2 = new Subtask("Subtask 2", "Description Subtask 2", TaskStatus.NEW, epic1.getId(), Duration.ofMinutes(15), LocalDateTime.now().plusDays(2));
@@ -71,7 +83,5 @@ public class Main {
         for (Task task : manager.getHistory()) {
             System.out.println(task);
         }*/
-
     }
-
 }
