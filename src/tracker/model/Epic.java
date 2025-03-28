@@ -1,5 +1,7 @@
 package tracker.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import tracker.util.TaskStatus;
@@ -7,9 +9,10 @@ import tracker.util.TaskType;
 
 public class Epic extends Task {
     private ArrayList<Integer> subtaskIds;
+    private LocalDateTime endTime;
 
     public Epic(String title, String description) {
-        super(title, description, TaskStatus.NEW);
+        super(title, description, TaskStatus.NEW, Duration.ZERO, null);
         this.subtaskIds = new ArrayList<>();
     }
 
@@ -32,6 +35,14 @@ public class Epic extends Task {
         subtaskIds.clear();
     }
 
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public TaskType getType() {
         return TaskType.EPIC;
@@ -39,11 +50,14 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "tracker.model.Epic{" +
+        return "Epic{" +
                 "id=" + getId() +
                 ", title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +
+                ", duration=" + getDuration() +
+                ", startTime=" + getStartTime() +
+                ", endTime=" + endTime +
                 ", subtaskIds=" + subtaskIds +
                 "} ";
     }

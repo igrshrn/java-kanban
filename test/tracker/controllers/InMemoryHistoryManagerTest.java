@@ -7,6 +7,8 @@ import tracker.model.Task;
 import tracker.util.Managers;
 import tracker.util.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +23,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void add() {
-        Task task = new Task("Test add", "Test add description", TaskStatus.NEW);
+        Task task = new Task("Test add", "Test add description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         task.setId(1);
         historyManager.add(task);
 
@@ -34,7 +36,7 @@ class InMemoryHistoryManagerTest {
     @Test
     void removeOldestTask() {
         for (int i = 1; i <= 11; i++) {
-            Task task = new Task("Test removeOldestTask " + i, "Test removeOldestTask " + i + " description", TaskStatus.NEW);
+            Task task = new Task("Test removeOldestTask " + i, "Test removeOldestTask " + i + " description", TaskStatus.NEW, Duration.ofMinutes(i), LocalDateTime.now().plusHours(i));
             task.setId(i);
             historyManager.add(task);
         }
@@ -49,8 +51,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void getHistory() {
-        Task task1 = new Task("Test getHistory 1", "Test getHistory 1 description", TaskStatus.NEW);
-        Task task2 = new Task("Test getHistory 2", "Test getHistory 2 description", TaskStatus.NEW);
+        Task task1 = new Task("Test getHistory 1", "Test getHistory 1 description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
+        Task task2 = new Task("Test getHistory 2", "Test getHistory 2 description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1));
         task1.setId(1);
         task2.setId(2);
         historyManager.add(task1);
@@ -65,9 +67,9 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void getHistoryAfterAdd() {
-        Task task1 = new Task("Test getHistory 1", "Test getHistory 1 description", TaskStatus.NEW);
-        Task task2 = new Task("Test getHistory 2", "Test getHistory 2 description", TaskStatus.NEW);
-        Task task3 = new Task("Test getHistory 3", "Test getHistory 3 description", TaskStatus.NEW);
+        Task task1 = new Task("Test getHistory 1", "Test getHistory 1 description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
+        Task task2 = new Task("Test getHistory 2", "Test getHistory 2 description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1));
+        Task task3 = new Task("Test getHistory 3", "Test getHistory 3 description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(2));
 
         task1.setId(1);
         task2.setId(2);

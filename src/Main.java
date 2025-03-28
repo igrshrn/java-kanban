@@ -5,17 +5,34 @@ import tracker.model.Task;
 import tracker.util.Managers;
 import tracker.util.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Main {
 
     public static void main(String[] args) {
         TaskManager manager = Managers.getDefault();
+        Task task = new Task("Test updateTask", "Test updateTask description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
+        manager.addTask(task);
+
+        Task updatedTask = new Task("Test updateTask updated", "Test updateTask updated description", TaskStatus.IN_PROGRESS, Duration.ofMinutes(10), LocalDateTime.now());
+        updatedTask.setId(task.getId());
+        manager.updateTask(updatedTask);
+
+        final Task savedTask = manager.getTaskById(task.getId());
+        System.out.println(savedTask);
+        System.out.println(manager.getPrioritizedTasks());
 
         // Создание задач
-        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
-        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
+        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(40), LocalDateTime.now().withSecond(0).withNano(0));
+        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(4).withSecond(0).withNano(0));
+        Task task3 = new Task("Task 3", "Description 3", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(2).withSecond(0).withNano(0));
+        Task task4 = new Task("Task 4", "Description 4", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1).withSecond(0).withNano(0));
 
         manager.addTask(task1);
         manager.addTask(task2);
+        manager.addTask(task3);
+        manager.addTask(task4);
 
         // Создание эпиков
         Epic epic1 = new Epic("Epic 1", "Description Epic 1");
@@ -25,16 +42,16 @@ public class Main {
         manager.addEpic(epic2);
 
         // Создание подзадач для эпика 1
-        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", TaskStatus.NEW, epic1.getId());
-        Subtask subtask2 = new Subtask("Subtask 2", "Description Subtask 2", TaskStatus.NEW, epic1.getId());
-        Subtask subtask3 = new Subtask("Subtask 3", "Description Subtask 3", TaskStatus.NEW, epic1.getId());
+        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", TaskStatus.NEW, epic1.getId(), Duration.ofMinutes(10), LocalDateTime.now().plusDays(3));
+        Subtask subtask2 = new Subtask("Subtask 2", "Description Subtask 2", TaskStatus.NEW, epic1.getId(), Duration.ofMinutes(15), LocalDateTime.now().plusDays(2));
+        Subtask subtask3 = new Subtask("Subtask 3", "Description Subtask 3", TaskStatus.NEW, epic1.getId(), Duration.ofMinutes(20), LocalDateTime.now().plusDays(1));
 
         manager.addSubtask(subtask1);
         manager.addSubtask(subtask2);
         manager.addSubtask(subtask3);
-
+        System.out.println(manager.getPrioritizedTasks());
         // Запрос задач в разном порядке
-        manager.getTaskById(subtask1.getId());
+        /*manager.getTaskById(subtask1.getId());
         manager.getTaskById(epic2.getId());
         manager.getTaskById(task2.getId());
         manager.getTaskById(task1.getId());
@@ -65,8 +82,6 @@ public class Main {
         System.out.println("\nИстория после удаления Epic 1:");
         for (Task task : manager.getHistory()) {
             System.out.println(task);
-        }
-
+        }*/
     }
-
 }

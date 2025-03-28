@@ -34,4 +34,8 @@ public interface TaskManager {
     List<Subtask> getSubtasksOfEpic(int epicId);
 
     List<Task> getHistory();
+
+    void updateTimeEpic(Epic epic);
+
+    List<Task> getPrioritizedTasks();
 }
