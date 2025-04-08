@@ -2,6 +2,7 @@ package tracker.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tracker.exceptions.TaskOverlapException;
 import tracker.interfaces.TaskManager;
 import tracker.model.Epic;
 import tracker.model.Subtask;
@@ -26,7 +27,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     protected abstract T createTaskManager();
 
     @Test
-    void getAllTasks() {
+    void getAllTasks() throws TaskOverlapException {
         Task task = new Task("Test getAllTasks", "Test getAllTasks description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -48,7 +49,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getAllSubtasks() {
+    void getAllSubtasks() throws TaskOverlapException {
         Epic epic = new Epic("Test getAllSubtasks", "Test getAllSubtasks description");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Test getAllSubtasks", "Test getAllSubtasks description", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(10), LocalDateTime.now());
@@ -61,7 +62,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getTaskById() {
+    void getTaskById() throws TaskOverlapException {
         Task task = new Task("Test getTaskById", "Test getTaskById description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -81,7 +82,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getSubtaskById() {
+    void getSubtaskById() throws TaskOverlapException {
         Epic epic = new Epic("Test getSubtaskById", "Test getSubtaskById description");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Test getSubtaskById", "Test getSubtaskById description", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(10), LocalDateTime.now());
@@ -93,7 +94,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void addTask() {
+    void addTask() throws TaskOverlapException {
         Task task = new Task("Test addTask", "Test addTask description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -115,7 +116,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void addSubtask() {
+    void addSubtask() throws TaskOverlapException {
         Epic epic = new Epic("Test addSubtask", "Test addSubtask description");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Test addSubtask", "Test addSubtask description", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(10), LocalDateTime.now());
@@ -128,7 +129,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateTask() {
+    void updateTask() throws TaskOverlapException {
         Task task = new Task("Test updateTask", "Test updateTask description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -142,7 +143,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateSubtask() {
+    void updateSubtask() throws TaskOverlapException {
         Epic epic = new Epic("Test updateSubtask", "Test updateSubtask description");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Test updateSubtask", "Test updateSubtask description", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(10), LocalDateTime.now());
@@ -172,7 +173,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteTaskById() {
+    void deleteTaskById() throws TaskOverlapException {
         Task task = new Task("Test deleteTaskById", "Test deleteTaskById description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -194,7 +195,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteSubtaskById() {
+    void deleteSubtaskById() throws TaskOverlapException {
         Epic epic = new Epic("Test deleteSubtaskById", "Test deleteSubtaskById description");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Test deleteSubtaskById", "Test deleteSubtaskById description", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(10), LocalDateTime.now());
@@ -207,7 +208,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteTasks() {
+    void deleteTasks() throws TaskOverlapException {
         Task task1 = new Task("Test deleteTasks 1", "Test deleteTasks 1 description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         Task task2 = new Task("Test deleteTasks 2", "Test deleteTasks 2 description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1));
         taskManager.addTask(task1);
@@ -220,7 +221,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteSubtasks() {
+    void deleteSubtasks() throws TaskOverlapException {
         Epic epic = new Epic("Test deleteSubtasks", "Test deleteSubtasks description");
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask("Test deleteSubtasks 1", "Test deleteSubtasks 1 description", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(10), LocalDateTime.now());
@@ -248,7 +249,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getSubtasksOfEpic() {
+    void getSubtasksOfEpic() throws TaskOverlapException {
         Epic epic = new Epic("Test getSubtasksOfEpic", "Test getSubtasksOfEpic description");
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask("Test getSubtasksOfEpic 1", "Test getSubtasksOfEpic 1 description", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(10), LocalDateTime.now());
@@ -264,7 +265,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getHistory() {
+    void getHistory() throws TaskOverlapException {
         Task task = new Task("Test getHistory", "Test getHistory description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
         taskManager.getTaskById(task.getId());
@@ -277,7 +278,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getHistoryAfterRemove() {
+    void getHistoryAfterRemove() throws TaskOverlapException {
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1));
         taskManager.addTask(task1);
@@ -318,7 +319,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getHistoryAfterRemoveAllTasks() {
+    void getHistoryAfterRemoveAllTasks() throws TaskOverlapException {
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1));
 
@@ -334,7 +335,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getHistoryAfterRemoveAllSubtasks() {
+    void getHistoryAfterRemoveAllSubtasks() throws TaskOverlapException {
         Epic epic1 = new Epic("Epic 1", "Description Epic 1");
         Epic epic2 = new Epic("Epic 2", "Description Epic 2");
 
