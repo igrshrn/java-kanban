@@ -2,6 +2,7 @@ package tracker.handler;
 
 import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Task;
 import tracker.server.HttpTaskServerTest;
 import tracker.util.TaskStatus;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PrioritizedTasksHandlerTest extends HttpTaskServerTest {
 
     @Test
-    public void testGetPrioritizedTasks() throws IOException, InterruptedException {
+    public void testGetPrioritizedTasks() throws IOException, InterruptedException, TaskOverlapException {
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1));
         taskManager.addTask(task1);
@@ -28,7 +29,7 @@ class PrioritizedTasksHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testPrioritizedTasksOrder() throws IOException, InterruptedException {
+    public void testPrioritizedTasksOrder() throws IOException, InterruptedException, TaskOverlapException {
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusHours(1));
         taskManager.addTask(task1);

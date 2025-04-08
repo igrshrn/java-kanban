@@ -1,6 +1,7 @@
 package tracker.controllers;
 
 import tracker.exceptions.ManagerSaveException;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Epic;
 import tracker.model.Subtask;
 import tracker.model.Task;
@@ -25,7 +26,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws TaskOverlapException {
         super.addTask(task);
         save();
     }
@@ -37,7 +38,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws TaskOverlapException {
         super.addSubtask(subtask);
         save();
     }
@@ -105,11 +106,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         manager.setIdCounter(task.getId() - 1);
 
                         if (task.getType() == TaskType.TASK) {
-                            manager.addTask(task);
+                            try {
+                                manager.addTask(task);
+                            } catch (TaskOverlapException e) {
+                                throw new RuntimeException(e);
+                            }
                         } else if (task.getType() == TaskType.EPIC) {
                             manager.addEpic((Epic) task);
                         } else if (task.getType() == TaskType.SUBTASK) {
-                            manager.addSubtask((Subtask) task);
+                            try {
+                                manager.addSubtask((Subtask) task);
+                            } catch (TaskOverlapException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     });
         } catch (IOException e) {
@@ -239,6 +248,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
         } catch (IOException e) {
             System.err.println("Ошибка при работе с файлом: " + e.getMessage());
+        } catch (TaskOverlapException e) {
+            throw new RuntimeException(e);
         }
     }
 }

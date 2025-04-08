@@ -60,14 +60,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws TaskOverlapException {
         try {
             doesTaskOverlapWithExisting(task);
             final int id = ++idCounter;
             task.setId(id);
             tasks.put(id, task);
         } catch (TaskOverlapException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new TaskOverlapException(e.getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws TaskOverlapException {
         try {
             doesTaskOverlapWithExisting(subtask);
             final int id = ++idCounter;
@@ -92,7 +92,7 @@ public class InMemoryTaskManager implements TaskManager {
                 updateTimeEpic(epic);
             }
         } catch (TaskOverlapException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new TaskOverlapException(e.getMessage());
         }
     }
 

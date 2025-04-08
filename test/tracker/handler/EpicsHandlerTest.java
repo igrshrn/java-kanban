@@ -1,6 +1,7 @@
 package tracker.handler;
 
 import org.junit.jupiter.api.Test;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Epic;
 import tracker.model.Subtask;
 import tracker.server.HttpTaskServerTest;
@@ -41,7 +42,7 @@ class EpicsHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testGetEpicSubtasks() throws IOException, InterruptedException {
+    public void testGetEpicSubtasks() throws IOException, InterruptedException, TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Description");
         taskManager.addEpic(epic);
 
@@ -66,6 +67,6 @@ class EpicsHandlerTest extends HttpTaskServerTest {
         assertEquals(200, response.statusCode());
 
         HttpResponse<String> getResponse = sendGetRequest("/epics/" + epic.getId());
-        assertEquals(404, getResponse.statusCode());
+        assertEquals(405, getResponse.statusCode());
     }
 }

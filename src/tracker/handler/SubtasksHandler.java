@@ -1,8 +1,8 @@
 package tracker.handler;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import tracker.exceptions.TaskOverlapException;
 import tracker.interfaces.TaskManager;
 import tracker.model.Subtask;
 
@@ -11,36 +11,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
-    private final Gson gson;
     private final TaskManager taskManager;
 
-    public SubtasksHandler(TaskManager taskManager, Gson gson) {
+    public SubtasksHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
-        this.gson = gson;
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        String method = exchange.getRequestMethod();
-        try {
-            switch (method) {
-                case "GET" -> handleGet(exchange);
-                case "POST" -> handlePost(exchange);
-                case "DELETE" -> handleDelete(exchange);
-                case null, default -> exchange.sendResponseHeaders(405, -1);
-            }
-        } catch (Exception e) {
-            sendInternalError(exchange);
-        }
-    }
-
-    private void handleGet(HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestURI().toString();
+    protected void processGet(HttpExchange exchange, String path) throws IOException {
         if (path.matches(".*/subtasks/\\d+")) {
             String id = path.split("/")[2];
             Subtask subtask = (Subtask) taskManager.getTaskById(Integer.parseInt(id));
             if (subtask == null) {
-                sendNotFound(exchange);
+                sendMethodNotAllowed(exchange);
                 return;
             }
             sendText(exchange, gson.toJson(subtask));
@@ -50,7 +33,8 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    private void handlePost(HttpExchange exchange) throws IOException {
+    @Override
+    protected void processPost(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Subtask subtask = gson.fromJson(body, Subtask.class);
 
@@ -62,8 +46,8 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                 taskManager.updateTask(subtask);
                 exchange.sendResponseHeaders(200, -1);
             }
-        } catch (IllegalArgumentException e) {
-            sendHasInteractions(exchange);
+        } catch (TaskOverlapException e) {
+            sendHasInteractions(exchange, e);
         } catch (Exception e) {
             exchange.sendResponseHeaders(500, -1);
             exchange.getResponseBody().write(e.getMessage().getBytes(StandardCharsets.UTF_8));
@@ -72,9 +56,10 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    private void handleDelete(HttpExchange exchange) throws IOException {
+    @Override
+    protected void processDelete(HttpExchange exchange) throws IOException {
         String id = exchange.getRequestURI().toString().split("/")[2];
         taskManager.deleteTaskById(Integer.parseInt(id));
-        exchange.sendResponseHeaders(200, -1); // OK
+        exchange.sendResponseHeaders(200, -1);
     }
 }

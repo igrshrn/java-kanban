@@ -1,6 +1,7 @@
 package tracker.handler;
 
 import org.junit.jupiter.api.Test;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Epic;
 import tracker.model.Subtask;
 import tracker.server.HttpTaskServerTest;
@@ -35,7 +36,7 @@ class SubtasksHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testGetSubtask() throws IOException, InterruptedException {
+    public void testGetSubtask() throws TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Description");
         taskManager.addEpic(epic);
 
@@ -47,7 +48,7 @@ class SubtasksHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testUpdateSubtask() throws IOException, InterruptedException {
+    public void testUpdateSubtask() throws IOException, InterruptedException, TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Description");
         taskManager.addEpic(epic);
 
@@ -70,7 +71,7 @@ class SubtasksHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testDeleteSubtask() throws IOException, InterruptedException {
+    public void testDeleteSubtask() throws IOException, InterruptedException, TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Description");
         taskManager.addEpic(epic);
 
@@ -86,6 +87,6 @@ class SubtasksHandlerTest extends HttpTaskServerTest {
         assertEquals(200, response.statusCode());
 
         HttpResponse<String> getResponse = sendGetRequest("/subtasks/" + subtask.getId());
-        assertEquals(404, getResponse.statusCode());
+        assertEquals(405, getResponse.statusCode());
     }
 }

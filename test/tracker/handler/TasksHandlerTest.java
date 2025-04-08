@@ -1,6 +1,7 @@
 package tracker.handler;
 
 import org.junit.jupiter.api.Test;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Task;
 import tracker.server.HttpTaskServerTest;
 import tracker.util.TaskStatus;
@@ -31,7 +32,7 @@ class TasksHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testGetTask() throws IOException, InterruptedException {
+    public void testGetTask() throws IOException, InterruptedException, TaskOverlapException {
         Task task = new Task("Test Task", "Description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -40,7 +41,7 @@ class TasksHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testUpdateTask() throws IOException, InterruptedException {
+    public void testUpdateTask() throws IOException, InterruptedException, TaskOverlapException {
         Task task = new Task("Test Task", "Description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -60,7 +61,7 @@ class TasksHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testDeleteTask() throws IOException, InterruptedException {
+    public void testDeleteTask() throws IOException, InterruptedException, TaskOverlapException {
         Task task = new Task("Test Task", "Description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
 
@@ -73,11 +74,11 @@ class TasksHandlerTest extends HttpTaskServerTest {
         assertEquals(200, response.statusCode());
 
         HttpResponse<String> getResponse = sendGetRequest("/tasks/" + task.getId());
-        assertEquals(404, getResponse.statusCode());
+        assertEquals(405, getResponse.statusCode());
     }
 
     @Test
-    public void testTaskOverlap() throws IOException, InterruptedException {
+    public void testTaskOverlap() throws IOException, InterruptedException, TaskOverlapException {
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task1);
 

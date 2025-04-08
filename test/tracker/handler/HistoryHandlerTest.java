@@ -1,6 +1,7 @@
 package tracker.handler;
 
 import org.junit.jupiter.api.Test;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Task;
 import tracker.server.HttpTaskServerTest;
 import tracker.util.TaskStatus;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class HistoryHandlerTest extends HttpTaskServerTest {
 
     @Test
-    public void testGetHistory() throws IOException, InterruptedException {
+    public void testGetHistory() throws TaskOverlapException {
         Task task = new Task("Test Task", "Description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
         taskManager.getTaskById(task.getId());
@@ -27,7 +28,7 @@ class HistoryHandlerTest extends HttpTaskServerTest {
     }
 
     @Test
-    public void testHistoryAfterDelete() throws IOException, InterruptedException {
+    public void testHistoryAfterDelete() throws IOException, InterruptedException, TaskOverlapException {
         Task task = new Task("Test Task", "Description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
         taskManager.getTaskById(task.getId());
