@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tracker.exceptions.ManagerSaveException;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Task;
 import tracker.util.TaskStatus;
 
@@ -40,7 +41,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void saveAndLoad() {
+    void saveAndLoad() throws TaskOverlapException {
         Task task = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         taskManager.addTask(task);
         taskManager.save();

@@ -1,6 +1,7 @@
 package tracker.controllers;
 
 import org.junit.jupiter.api.Test;
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Epic;
 import tracker.model.Subtask;
 import tracker.model.Task;
@@ -19,7 +20,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void testEpicStatusNew() {
+    void testEpicStatusNew() throws TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Test Epic Description");
         taskManager.addEpic(epic);
 
@@ -33,7 +34,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void testEpicStatusDone() {
+    void testEpicStatusDone() throws TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Test Epic Description");
         taskManager.addEpic(epic);
 
@@ -47,7 +48,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void testEpicStatusInProgress() {
+    void testEpicStatusInProgress() throws TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Test Epic Description");
         taskManager.addEpic(epic);
 
@@ -61,7 +62,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void testEpicStatusWithInProgressSubtasks() {
+    void testEpicStatusWithInProgressSubtasks() throws TaskOverlapException {
         Epic epic = new Epic("Test Epic", "Test Epic Description");
         taskManager.addEpic(epic);
 
@@ -75,13 +76,13 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void testTaskOverlap() {
+    void testTaskOverlap() throws TaskOverlapException {
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now().plusMinutes(5));
 
         taskManager.addTask(task1);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(TaskOverlapException.class, () -> {
             taskManager.addTask(task2);
         }, "Задачи пересекаются");
     }

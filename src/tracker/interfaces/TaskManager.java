@@ -1,5 +1,6 @@
 package tracker.interfaces;
 
+import tracker.exceptions.TaskOverlapException;
 import tracker.model.Epic;
 import tracker.model.Subtask;
 import tracker.model.Task;
@@ -15,11 +16,11 @@ public interface TaskManager {
 
     Task getTaskById(int id);
 
-    void addTask(Task task);
+    void addTask(Task task) throws TaskOverlapException;
 
     void addEpic(Epic epic);
 
-    void addSubtask(Subtask subtask);
+    void addSubtask(Subtask subtask) throws TaskOverlapException;
 
     void updateTask(Task task);
 

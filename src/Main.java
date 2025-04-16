@@ -1,3 +1,4 @@
+import tracker.exceptions.TaskOverlapException;
 import tracker.interfaces.TaskManager;
 import tracker.model.Epic;
 import tracker.model.Subtask;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TaskOverlapException {
         TaskManager manager = Managers.getDefault();
         Task task = new Task("Test updateTask", "Test updateTask description", TaskStatus.NEW, Duration.ofMinutes(10), LocalDateTime.now());
         manager.addTask(task);
